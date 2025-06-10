@@ -18,10 +18,10 @@ def parse_tiktok(url: str):
     """Parse TikTok video and download it."""
     tiktok_video = TikTokVideoScraperMobile()
     video_id = tiktok_video.get_video_id_by_url(url)
-    tiktok_video_urls, video_thumbnail = tiktok_video.get_video_data_by_video_id(video_id)
+    tiktok_video_urls, video_thumbnail, geo_info = tiktok_video.get_video_data_by_video_id(video_id)
     downloaded_video_list = tiktok_video.download(tiktok_video_urls, video_id)
     tiktok_video.tiktok_session.close()
-    return tiktok_video_urls, downloaded_video_list
+    return tiktok_video_urls, downloaded_video_list, geo_info
 
 def download_image(url):
     """Download an image from a URL and return a PIL Image object."""
@@ -168,10 +168,9 @@ def convert_likelihood_to_percentage_bounded(likelihood, min_likelihood=-5, max_
 if __name__ == "__main__":
     # Parse TikTok video and download
     tiktok_url = "https://www.tiktok.com/@travelwithbleo/video/7477688351949098262" # just for example
-    tiktok_video_urls, downloaded_video_list = parse_tiktok(tiktok_url)
+    tiktok_video_urls, downloaded_video_list, geo_info = parse_tiktok(tiktok_url)
     print("TikTok Video URLs:", tiktok_video_urls)
     print("Downloaded Video List:", downloaded_video_list)
-
     # Assume the first downloaded video is used
     if downloaded_video_list:
         video_path = downloaded_video_list[0]  # Path to the downloaded video
@@ -182,6 +181,7 @@ if __name__ == "__main__":
         else:
             # Process the extracted frames
             result = process_post_data(frames)
+            print("Geo Info:", geo_info)
             print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
         print("No video downloaded.")

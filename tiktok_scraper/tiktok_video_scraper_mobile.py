@@ -115,8 +115,14 @@ class TikTokVideoScraperMobile:
         except Exception as e:
             print(e, "\nError on line {}".format(sys.exc_info()[-1].tb_lineno))
             raise SystemExit('error getting video url')
-        
-        return tiktok_video_url, thumbnail
+        geo_info = {
+            "region": json_video_data["aweme_list"][0]["author"]["region"],
+            "tags": [
+                tag for tag in json_video_data["aweme_list"][0]["desc"].split() 
+                if tag.startswith("#")
+            ]
+        }
+        return tiktok_video_url, thumbnail, geo_info
 
 
     def download(self, tiktok_video_url: str, video_id: str) -> list:
